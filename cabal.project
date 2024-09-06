@@ -1,2 +1,5 @@
 packages: .
-tests: true
+
+tests: True
+
+documentation: True

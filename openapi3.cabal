@@ -1,49 +1,44 @@
-cabal-version:       >=1.10
-name:                openapi3
-version:             3.2.4
-
-synopsis:            OpenAPI 3.0 data model
-category:            Web, Swagger, OpenApi
+cabal-version:      3.0
+name:               openapi3
+version:            3.2.4
+synopsis:           OpenAPI 3.0 data model
+category:           Web, Swagger, OpenApi
 description:
   This library is intended to be used for decoding and encoding OpenAPI 3.0 API
   specifications as well as manipulating them.
   .
   The original OpenAPI 3.0 specification is available at http://swagger.io/specification/.
 
-homepage:            https://github.com/biocad/openapi3
-bug-reports:         https://github.com/biocad/openapi3/issues
-license:             BSD3
-license-file:        LICENSE
-author:              Nickolay Kudasov, Maxim Koltsov
-maintainer:          nickolay@getshoptv.com, kolmax94@gmail.com
-copyright:           (c) 2015-2016, GetShopTV, (c) 2020, Biocad
-build-type:          Custom
-extra-source-files:
-    README.md
-  , CHANGELOG.md
-  , examples/*.hs
-tested-with:
-  GHC ==8.4.4
-   || ==8.6.5
-   || ==8.8.4
-   || ==8.10.7
-   || ==9.0.2
-   || ==9.2.8
-   || ==9.4.8
-   || ==9.6.3
-   || ==9.8.1
+homepage:           https://github.com/biocad/openapi3
+bug-reports:        https://github.com/biocad/openapi3/issues
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Nickolay Kudasov, Maxim Koltsov
+maintainer:         nickolay@getshoptv.com, kolmax94@gmail.com
+copyright:
+  (c) 2015-2016, GetShopTV, (c) 2020, Biocad, (c) 2024, Scrive AB
 
-custom-setup
-  setup-depends:
-    base < 5,
-    Cabal < 4,
-    cabal-doctest >=1.0.6 && <1.1
+build-type:         Simple
+extra-source-files:
+  CHANGELOG.md
+  examples/*.hs
+  README.md
+
+tested-with:        GHC ==9.2.8 || ==9.4.8 || ==9.6.6 || ==9.8.2
 
 library
-  hs-source-dirs:      src
+  hs-source-dirs:   src
   exposed-modules:
     Data.OpenApi
+    Data.OpenApi.Aeson.Compat
     Data.OpenApi.Declare
+    Data.OpenApi.Internal
+    Data.OpenApi.Internal.AesonUtils
+    Data.OpenApi.Internal.ParamSchema
+    Data.OpenApi.Internal.Schema
+    Data.OpenApi.Internal.Schema.Validation
+    Data.OpenApi.Internal.TypeShape
+    Data.OpenApi.Internal.Utils
     Data.OpenApi.Lens
     Data.OpenApi.Operation
     Data.OpenApi.Optics
@@ -53,112 +48,99 @@ library
     Data.OpenApi.Schema.Validation
     Data.OpenApi.SchemaOptions
 
-    -- internal modules
-    Data.OpenApi.Internal
-    Data.OpenApi.Internal.Schema
-    Data.OpenApi.Internal.Schema.Validation
-    Data.OpenApi.Internal.ParamSchema
-    Data.OpenApi.Internal.Utils
-    Data.OpenApi.Internal.AesonUtils
-    Data.OpenApi.Internal.TypeShape
-
-    Data.OpenApi.Aeson.Compat
-
-  -- GHC boot libraries
   build-depends:
-      base             >=4.11.1.0  && <4.20
-    , bytestring       >=0.10.8.2  && <0.13
-    , containers       >=0.5.11.0  && <0.8
-    , template-haskell >=2.13.0.0  && <2.22
-    , time             >=1.8.0.2   && <1.14
-    , transformers     >=0.5.5.0   && <0.7
+      aeson                      >=2.2.3  && <2.3
+    , aeson-pretty               >=0.8.10 && <0.9
+    , base                       >=4.16   && <4.20
+    , base-compat-batteries      >=0.14.0 && <0.15
+    , bytestring                 >=0.11.4 && <0.13
+    , containers                 >=0.6.5  && <0.7
+    , cookie                     >=0.5.0  && <0.6
+    , generics-sop               >=0.5.1  && <0.6
+    , hashable                   >=1.4.7  && <1.5
+    , http-media                 >=0.8.1  && <0.9
+    , insert-ordered-containers  >=0.2.6  && <0.3
+    , lens                       >=5.3.2  && <5.4
+    , mtl                        >=2.2.2  && <2.4
+    , optics-core                >=0.4.1  && <0.5
+    , optics-th                  >=0.4.1  && <0.5
+    , QuickCheck                 >=2.15.0 && <2.16
+    , scientific                 >=0.3.8  && <0.4
+    , template-haskell           >=2.18.0 && <2.22
+    , text                       >=1.2.5  && <2.2
+    , time                       >=1.11.1 && <1.13
+    , transformers               >=0.5.6  && <0.7
+    , unordered-containers       >=0.2.20 && <0.3
+    , uuid-types                 >=1.0.6  && <1.1
+    , vector                     >=0.13.1 && <0.14
 
-  build-depends:
-      mtl              >=2.2.2   && <2.4
-    , text             >=1.2.3.1 && <2.2
-
-  -- other dependencies
-  build-depends:
-      base-compat-batteries     >=0.11.1   && <0.14
-    , aeson                     >=1.4.2.0  && <1.6 || >=2.0.1.0 && < 2.3
-    , aeson-pretty              >=0.8.7    && <0.9
-    -- cookie 0.4.3 is needed by GHC 7.8 due to time>=1.4 constraint
-    , cookie                    >=0.4.3    && <0.6
-    , generics-sop              >=0.5.1.0  && <0.6
-    , hashable                  >=1.2.7.0  && <1.5
-    , http-media                >=0.8.0.0  && <0.9
-    , insert-ordered-containers >=0.2.3    && <0.3
-    , lens                      >=4.16.1   && <5.4
-    , optics-core               >=0.2      && <0.5
-    , optics-th                 >=0.2      && <0.5
-    , scientific                >=0.3.6.2  && <0.4
-    , unordered-containers      >=0.2.9.0  && <0.3
-    , uuid-types                >=1.0.3    && <1.1
-    , vector                    >=0.12.0.1 && <0.14
-    , QuickCheck                >=2.10.1   && <2.16
-
-  default-language:    Haskell2010
+  default-language: Haskell2010
 
 test-suite spec
-  type:             exitcode-stdio-1.0
-  hs-source-dirs:   test
-  main-is:          Spec.hs
-
-  -- From library part
-  -- We need aeson's toEncoding for doctests too
+  type:               exitcode-stdio-1.0
+  hs-source-dirs:     test
+  main-is:            Spec.hs
   build-depends:
-      base
-    , QuickCheck
-    , aeson
+      aeson
+    , base
     , base-compat-batteries
     , bytestring
     , containers
     , hashable
+    , hspec                      >=2.5.5   && <2.12
+    , HUnit                      >=1.6.0.0 && <1.7
     , insert-ordered-containers
     , lens
     , mtl
     , openapi3
+    , QuickCheck
+    , quickcheck-instances       >=0.3.19  && <0.14
     , template-haskell
     , text
     , time
     , unordered-containers
+    , utf8-string                >=1.0.1.1 && <1.1
     , vector
 
-  -- test-suite only dependencies
-  build-depends:
-      hspec                >=2.5.5   && <2.12
-    , HUnit                >=1.6.0.0 && <1.7
-    , quickcheck-instances >=0.3.19  && <0.14
-    , utf8-string          >=1.0.1.1 && <1.1
-
   -- https://github.com/haskell/cabal/issues/3708
-  build-tool-depends:
-    hspec-discover:hspec-discover >=2.5.5 && <2.12
-
+  build-tool-depends: hspec-discover:hspec-discover >=2.5.5 && <2.12
   other-modules:
-    SpecCommon
-    Data.OpenApiSpec
     Data.OpenApi.CommonTestTypes
     Data.OpenApi.ParamSchemaSpec
-    Data.OpenApi.SchemaSpec
-    Data.OpenApi.Schema.ValidationSpec
     Data.OpenApi.Schema.GeneratorSpec
-  default-language: Haskell2010
+    Data.OpenApi.Schema.ValidationSpec
+    Data.OpenApi.SchemaSpec
+    Data.OpenApiSpec
+    SpecCommon
+
+  default-language:   Haskell2010
 
 test-suite doctests
   -- See QuickCheck note in https://github.com/phadej/cabal-doctest#notes
-  build-depends:    base, doctest, Glob, QuickCheck
+  build-depends:
+      base
+    , doctest
+    , Glob
+    , QuickCheck
+
   default-language: Haskell2010
   hs-source-dirs:   test
   main-is:          doctests.hs
   type:             exitcode-stdio-1.0
-  build-depends:    base, openapi3
+  build-depends:
+      base
+    , openapi3
 
 executable example
   hs-source-dirs:   examples
   main-is:          hackage.hs
   default-language: Haskell2010
-  build-depends:    base, aeson, lens, openapi3, text
+  build-depends:
+      aeson
+    , base
+    , lens
+    , openapi3
+    , text
 
 source-repository head
   type:     git

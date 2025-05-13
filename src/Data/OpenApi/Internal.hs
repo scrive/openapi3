@@ -52,7 +52,8 @@ import Data.OpenApi.Aeson.Compat        (deleteKey)
 import Data.OpenApi.Internal.AesonUtils (AesonDefaultValue (..), HasSwaggerAesonOptions (..),
                                          mkSwaggerAesonOptions, saoAdditionalPairs, saoSubObject,
                                          sopSwaggerGenericParseJSON, sopSwaggerGenericToEncoding,
-                                         sopSwaggerGenericToJSON, sopSwaggerGenericToJSONWithOpts)
+                                         sopSwaggerGenericToEncodingWithOpts, sopSwaggerGenericToJSON,
+                                         sopSwaggerGenericToJSONWithOpts)
 import Data.OpenApi.Internal.Utils
 import Generics.SOP.TH                  (deriveGeneric)
 import Data.Version
@@ -1347,6 +1348,8 @@ instance ToJSON SecurityScheme where
 instance ToJSON Schema where
   toJSON = sopSwaggerGenericToJSONWithOpts $
       mkSwaggerAesonOptions "schema" & saoSubObject ?~ "items"
+  toEncoding = sopSwaggerGenericToEncodingWithOpts $
+      mkSwaggerAesonOptions "schema" & saoSubObject ?~ "items"
 
 instance ToJSON Header where
   toJSON = sopSwaggerGenericToJSON
@@ -1428,14 +1431,34 @@ referencedToJSON :: ToJSON a => Text -> Referenced a -> Value
 referencedToJSON prefix (Ref (Reference ref)) = object [ "$ref" .= (prefix <> ref) ]
 referencedToJSON _ (Inline x) = toJSON x
 
-instance ToJSON (Referenced Schema)   where toJSON = referencedToJSON "#/components/schemas/"
-instance ToJSON (Referenced Param)    where toJSON = referencedToJSON "#/components/parameters/"
-instance ToJSON (Referenced Response) where toJSON = referencedToJSON "#/components/responses/"
-instance ToJSON (Referenced RequestBody) where toJSON = referencedToJSON "#/components/requestBodies/"
-instance ToJSON (Referenced Example)  where toJSON = referencedToJSON "#/components/examples/"
-instance ToJSON (Referenced Header)   where toJSON = referencedToJSON "#/components/headers/"
-instance ToJSON (Referenced Link)     where toJSON = referencedToJSON "#/components/links/"
-instance ToJSON (Referenced Callback) where toJSON = referencedToJSON "#/components/callbacks/"
+referencedToEncoding :: ToJSON a => Text -> Referenced a -> JSON.Encoding
+referencedToEncoding prefix (Ref (Reference ref)) = pairs $ "$ref" .= (prefix <> ref)
+referencedToEncoding _ (Inline x) = toEncoding x
+
+instance ToJSON (Referenced Schema) where
+  toJSON = referencedToJSON "#/components/schemas/"
+  toEncoding = referencedToEncoding "#/components/schemas/"
+instance ToJSON (Referenced Param) where
+  toJSON = referencedToJSON "#/components/parameters/"
+  toEncoding = referencedToEncoding "#/components/parameters/"
+instance ToJSON (Referenced Response) where
+  toJSON = referencedToJSON "#/components/responses/"
+  toEncoding = referencedToEncoding "#/components/responses/"
+instance ToJSON (Referenced RequestBody) where
+  toJSON = referencedToJSON "#/components/requestBodies/"
+  toEncoding = referencedToEncoding "#/components/requestBodies/"
+instance ToJSON (Referenced Example) where
+  toJSON = referencedToJSON "#/components/examples/"
+  toEncoding = referencedToEncoding "#/components/examples/"
+instance ToJSON (Referenced Header) where
+  toJSON = referencedToJSON "#/components/headers/"
+  toEncoding = referencedToEncoding "#/components/headers/"
+instance ToJSON (Referenced Link) where
+  toJSON = referencedToJSON "#/components/links/"
+  toEncoding = referencedToEncoding "#/components/links/"
+instance ToJSON (Referenced Callback) where
+  toJSON = referencedToJSON "#/components/callbacks/"
+  toEncoding = referencedToEncoding "#/components/callbacks/"
 
 instance ToJSON AdditionalProperties where
   toJSON (AdditionalPropertiesAllowed b) = toJSON b
